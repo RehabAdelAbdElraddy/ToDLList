@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>lab2</title>
+    <style>
+ 
+   .wrapper{
+    display: flex;
+    justify-content: space-between;
+
+   }
+   .wrapper > div {
+       width: 100%;
+       height: 500px;
+       white-space: pre;
+       border: 2px solid black;
+   }
+   .Bink
+   {
+    background-color: rgb(240, 17, 129);
+       font-weight: bold;
+   }
+   .orange
+   {
+    background-color: rgb(231, 144, 29);
+       font-weight: bold;
+   }
+   .blue
+   {
+    background-color: rgb(73, 36, 238);
+       font-weight: bold;
+   }
+   .green
+   {
+       background-color: rgb(22, 219, 55);
+       font-weight: bold;
+       font-size: 20px;
+
+       text-align: center;
+   }
+   body{
+       background-image: url("css/images.jpg");
+       background-repeat: no-repeat;
+    position: relative;
+    width: auto;
+    max-width: 100%;
+	height: 1000px;
+   }
+   .gradbtn
+    {
+        background-image: linear-gradient(to right,#868fff,#cf96ff);
+    }
+   
+    </style>
+</head>
+<body >
+    <script src="jquery-3.4.1.js"></script>
+   
+    <div class="text-center">
+    <input type="text" id="myInput" placeholder="Enter The Task.." class="rounded-pill mb-5  mt-5" style="width: 300px;" >
+    <input type="button" id="b1" value="ADD" class="btn font-weight-bold text-white btn-lg mb-3 gradbtn rounded-pill" style="width: 200px; height: 40px;"/>
+</div>
+<div class="row">
+<div class=" rounded-pill  col-lg-3 text-center display-4" style="background-color: rgb(226, 92, 119); " >
+    <p>
+      In Progress
+    </p>
+</div>
+<div class=" rounded-pill  col-lg-3 text-center display-4 " style="background-color: rgb(68, 6, 240);  " >
+    <p>
+     Holding...
+    </p>
+</div>
+<div class=" rounded-pill  col-lg-3  text-center display-4" style="background-color: rgb(240, 146, 6);  " >
+    <p>
+     Review...
+    </p>
+</div>
+<div class=" rounded-pill  col-lg-3 " style="background-color: rgb(14, 240, 6);  " >
+    <p class=" text-center display-4 ">
+    Done
+    </p>
+</div>
+
+</div>
+    <div class="wrapper">
+      
+       
+    <div id="inprogress" 
+    ondragover="allowDrop(event)"
+        ondrop="drop(event)">
+    </div>
+  
+   
+    <div  id="onhold"
+    ondragover="allowDrop(event)"
+        ondrop="drop(event)"
+    
+    >
+        
+    </div> 
+   
+    <div  id="Review" ondragover="allowDrop(event)"
+    ondrop="drop(event)">
+       
+    </div>
+   
+    
+    <div  id="Done"
+    ondragover="allowDrop(event)"
+        ondrop="drop(event)">
+       
+    </div>
+   
+    </div>
+
+    <script>        
+        var rand; 
+     //    var rand2;
+        var myarray=[];
+ $("#b1").click(function()
+ {  var input,val,divobj;
+     rand= Math.floor((  Math.random()*100)+1);
+     // rand2= Math.floor((  Math.random()*50)+1);
+     input = document.getElementById("myInput");
+     val = input.value;   
+     console.log(val);
+     divobj=document.getElementById("inprogress");
+     var newP = $("<p>"+val+"</p>")
+     newP.attr("id",rand);
+     newP.addClass("Bink")
+     newP.attr("draggable","true");
+     newP.attr("ondragstart","drag(event)");
+     newP.appendTo(divobj);
+      console.log("done");
+      var obj=
+      {  textvalue:val,
+         status:"inprogress",
+          objid:rand, 
+      };
+      if(localStorage.getItem('tasks'))
+                  {
+                     myarray=JSON.parse(localStorage.getItem('tasks'));
+
+
+                  }
+
+     myarray.push(obj);
+    localStorage.setItem("tasks",JSON.stringify(myarray));
+     
+ });//click
+ 
+   
+
+     function drag (event) {
+ console.log(event)
+ event.dataTransfer.setData('text' , event.target.id)
+}
+
+function allowDrop (event) {
+ event.preventDefault()
+ console.log('allowDrop')
+}
+var p;
+var ev;
+var myarray
+function drop(event)  {
+ ev=event;
+console.log( ev.target);
+ console.log('droped')
+p =  event.dataTransfer.getData('text');
+
+var pobj=document.getElementById(p);
+event.target.appendChild( document.getElementById(p));
+if(ev.target.id=="Review")
+{
+        pobj.classList.add("orange");
+              
+}
+else
+{
+   if(ev.target.id=="onhold")
+   {
+     pobj.classList.add("blue");
+   }
+
+   else
+   {
+     if(ev.target.id=="Done")
+   {
+     pobj.classList.add("green");
+   }
+   }
+}
+
+
+
+myarray=JSON.parse(localStorage.getItem('tasks'))
+
+for (var index = 0; index < myarray.length; index++) {
+   if(myarray[index].objid==p)
+   {
+       myarray[index].status=ev.target.id;
+                
+   }
+   
+}
+localStorage.setItem("tasks",JSON.stringify(myarray));
+              
+} 
+
+var draw=[];
+var prglbll;
+draw1=function draww()
+{      draw =JSON.parse(localStorage.getItem('tasks'))
+    for (index = 0; index < draw.length; index++) {
+        prglbll=document.createElement("p");
+        prglbll.setAttribute("id",draw[index].objid);
+        prglbll.setAttribute("draggable","true");
+        prglbll.setAttribute("ondragstart","drag(event)");
+        prglbll.innerText=draw[index].textvalue;
+        
+        switch(draw[index].status)
+        {
+            case "inprogress":
+                prglbll.className="Bink";
+                break;
+             case "onhold":
+                 prglbll.className="blue";
+                break;
+             case "Review":
+                 prglbll.className="orange";
+                break;
+             case "Done":
+                 prglbll.className="green";
+                break;
+        }
+     
+        document.getElementById(draw[index].status).appendChild(prglbll);
+        
+    }
+
+}
+
+window.addEventListener("load",draw1);
+window,addEventListener("drag",drag);
+window,addEventListener("drop",drop);
+window,addEventListener("dragover",allowDrop);
+
+
+
+ </script>
+</body>
+</html>
